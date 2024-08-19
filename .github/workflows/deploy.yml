@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # Ana branch'ın adını doğru yazdığınızdan emin olun. Örneğin 'master' veya 'main'.
+      - master  # Ana branch'ın adını doğru yazdığınızdan emin olun. Örneğin 'master' veya 'main'.
 
 jobs:
   deploy:
