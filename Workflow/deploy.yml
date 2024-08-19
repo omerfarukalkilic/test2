@@ -3,26 +3,30 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - master
-
+      - main  # 
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install python3-pip -y
-          pip3 install flask
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Copy files to EC2
-        run: |
-          scp -i /path/to/your/key.pem -r * ec2-user@your-ec2-ip:/home/ec2-user/app
+    - name: Copy files to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -r * ubuntu@your-ec2-ip:/home/ubuntu/app
 
-      - name: Run the application
-        run: |
-          ssh -i /path/to/your/key.pem ec2-user@your-ec2-ip 'cd /home/ec2-user/app && nohup python3 app.py &'
+    - name: Install dependencies and restart application
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@your-ec2-ip << 'EOF'
+        cd /home/ubuntu/app
+        pip3 install -r requirements.txt
+        pkill -f app.py || true
+        nohup python3 app.py &
+        EOF
