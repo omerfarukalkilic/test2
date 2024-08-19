@@ -52,5 +52,8 @@ def complete_task(id):
 import os
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    host = '0.0.0.0' if os.environ.get('FLASK_ENV') == 'production' else '127.0.0.1'
+    app.run(debug=True, host=host)
+    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000
 
