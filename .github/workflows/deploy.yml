@@ -30,7 +30,9 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@100.25.188.236 << 'EOF'
         cd /home/ubuntu/test2
-        pip3 install -r requirements.txt
-        pkill -f app.py || true
-        nohup python3 app.py &
+        python3 -m venv venv  # Sanal ortamı oluştur
+        source venv/bin/activate  # Sanal ortamı etkinleştir
+        pip install -r requirements.txt  # Bağımlılıkları sanal ortama kur
+        pkill -f app.py || true  # Eski uygulamayı durdur
+        nohup venv/bin/python app.py &  # Uygulamayı sanal ortamdan çalıştır
         EOF
