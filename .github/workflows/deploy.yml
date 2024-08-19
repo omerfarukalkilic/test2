@@ -20,7 +20,7 @@ jobs:
 
     - name: Copy files to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -r * ubuntu@your-ec2-ip:/home/ubuntu/app
+        scp -o StrictHostKeyChecking=no -r * ubuntu@100.25.188.236:/home/ubuntu/app
 
     - name: Install dependencies and restart application
       run: |
