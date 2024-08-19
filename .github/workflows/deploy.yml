@@ -1,10 +1,9 @@
 name: Deploy to EC2
 
-# Hangi durumda çalışacağını belirtiyoruz. Burada 'main' branşına yapılan push'lar ile tetiklenecek.
 on:
   push:
     branches:
-      - main  # Ana branşın adını buraya yazın, 'master' da olabilir.
+      - main  # Ana branch'ın adını doğru yazdığınızdan emin olun. Örneğin 'master' veya 'main'.
 
 jobs:
   deploy:
@@ -12,10 +11,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2  # Kodu GitHub'dan çekmek için
+      uses: actions/checkout@v2
 
     - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3  # SSH bağlantısı için
+      uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
@@ -27,7 +26,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@your-ec2-ip << 'EOF'
         cd /home/ubuntu/app
-        pip3 install -r requirements.txt  # Bağımlılıkları kur
-        pkill -f app.py || true           # Eski uygulamayı sonlandır
-        nohup python3 app.py &            # Uygulamayı yeniden başlat
+        pip3 install -r requirements.txt
+        pkill -f app.py || true
+        nohup python3 app.py &
         EOF
