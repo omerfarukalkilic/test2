@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - master  # Ana branch'ın adını doğru yazdığınızdan emin olun. Örneğin 'master' veya 'main'.
+      - master  # Branch adını 'master' olarak güncelledik
 
 jobs:
   deploy:
@@ -18,14 +18,18 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+    - name: Create project directory on EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@100.25.188.236 'mkdir -p /home/ubuntu/test2'
+
     - name: Copy files to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -r * ubuntu@100.25.188.236:/home/ubuntu/app
+        scp -o StrictHostKeyChecking=no -r * ubuntu@100.25.188.236:/home/ubuntu/test2
 
     - name: Install dependencies and restart application
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@your-ec2-ip << 'EOF'
-        cd /home/ubuntu/app
+        ssh -o StrictHostKeyChecking=no ubuntu@100.25.188.236 << 'EOF'
+        cd /home/ubuntu/test2
         pip3 install -r requirements.txt
         pkill -f app.py || true
         nohup python3 app.py &
