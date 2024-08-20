@@ -1,0 +1,36 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - master  # Branch adını 'master' olarak güncelledik
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Create project directory on EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@100.25.188.236 'mkdir -p /home/ubuntu/test2'
+    - name: Copy files to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -r * ubuntu@100.25.188.236:/home/ubuntu/test2
+    - name: Install dependencies and restart application
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@100.25.188.236 << 'EOF'
+        cd /home/ubuntu/test2
+        python3 -m venv venv  # Sanal ortamı oluştur
+        source venv/bin/activate  # Sanal ortamı etkinleştir
+        pip install -r requirements.txt  # Bağımlılıkları sanal ortama kur
+        pkill -f app.py || true  # Eski uygulamayı durdur
+        nohup venv/bin/python app.py &  # Uygulamayı sanal ortamdan çalıştır
+        EOF
