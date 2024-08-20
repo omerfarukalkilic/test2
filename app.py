@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import pytz
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
@@ -11,7 +12,7 @@ class Task(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     status = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Tarih ve saat
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/Istanbul')))  # Tarih ve saat
 
     def __repr__(self):
         return f"<Task {self.id}>"
@@ -48,10 +49,6 @@ def complete_task(id):
     task.status = True
     db.session.commit()
     return redirect(url_for('index'))   
-  
-import os
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
-
