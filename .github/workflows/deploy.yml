@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - master  # Branch adını 'master' olarak güncelledik
+      - master  # Bu, 'master' branch'ına push yapıldığında bu workflow'un tetikleneceğini belirtir.
 
 jobs:
   deploy:
@@ -20,13 +20,15 @@ jobs:
 
     - name: Create project directory on EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@100.25.188.236 'mkdir -p /home/ubuntu/test2'
+        ssh -o StrictHostKeyChecking=no ubuntu@YOUR_EC2_IP 'mkdir -p /home/ubuntu/test2'
+
     - name: Copy files to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -r * ubuntu@100.25.188.236:/home/ubuntu/test2
+        scp -o StrictHostKeyChecking=no -r * ubuntu@YOUR_EC2_IP:/home/ubuntu/test2
+
     - name: Install dependencies and restart application
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@100.25.188.236 << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@YOUR_EC2_IP << 'EOF'
         cd /home/ubuntu/test2
         python3 -m venv venv  # Sanal ortamı oluştur
         source venv/bin/activate  # Sanal ortamı etkinleştir
